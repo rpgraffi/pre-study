@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
@@ -15,33 +15,77 @@ interface Column {
 
 interface KanbanBoardProps {
   initialTasks: Task[];
+  useCaseId: string;
 }
 
-export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
-  const [columns, setColumns] = useState<Column[]>([
-    {
-      id: "building-blocks",
-      title: "Building Blocks",
-      tasks: initialTasks,
-    },
-    {
-      id: "essential",
-      title: "Essential",
-      tasks: [],
-    },
-    {
-      id: "semi-important",
-      title: "Semi Important",
-      tasks: [],
-    },
-    {
-      id: "unnecessary",
-      title: "Unnecessary",
-      tasks: [],
-    },
-  ]);
-
+export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
+  const [columns, setColumns] = useState<Column[]>([]);
   const [newTaskContent, setNewTaskContent] = useState("");
+
+  useEffect(() => {
+    const loadSavedState = () => {
+      const savedState = localStorage.getItem(`kanban-${useCaseId}`);
+      if (savedState) {
+        return JSON.parse(savedState);
+      }
+      return [
+        {
+          id: "building-blocks",
+          title: "Building Blocks",
+          tasks: initialTasks,
+        },
+        {
+          id: "essential",
+          title: "Essential",
+          tasks: [],
+        },
+        {
+          id: "semi-important",
+          title: "Semi Important",
+          tasks: [],
+        },
+        {
+          id: "unnecessary",
+          title: "Unnecessary",
+          tasks: [],
+        },
+      ];
+    };
+
+    setColumns(loadSavedState());
+  }, [initialTasks, useCaseId]);
+
+  useEffect(() => {
+    if (columns.length > 0) {
+      localStorage.setItem(`kanban-${useCaseId}`, JSON.stringify(columns));
+    }
+  }, [columns, useCaseId]);
+
+  const resetBoard = () => {
+    setColumns([
+      {
+        id: "building-blocks",
+        title: "Building Blocks",
+        tasks: initialTasks,
+      },
+      {
+        id: "essential",
+        title: "Essential",
+        tasks: [],
+      },
+      {
+        id: "semi-important",
+        title: "Semi Important",
+        tasks: [],
+      },
+      {
+        id: "unnecessary",
+        title: "Unnecessary",
+        tasks: [],
+      },
+    ]);
+    localStorage.removeItem(`kanban-${useCaseId}`);
+  };
 
   const onDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -113,7 +157,7 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-0">
       <div className="flex gap-4 mb-4">
         <Input
           value={newTaskContent}
@@ -122,6 +166,9 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
           className="max-w-sm"
         />
         <Button onClick={addTask}>Add Task</Button>
+        <Button variant="destructive" onClick={resetBoard}>
+          Reset Board
+        </Button>
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -145,20 +192,24 @@ export function KanbanBoard({ initialTasks }: KanbanBoardProps) {
                         index={index}
                       >
                         {(provided) => (
-                          <Card
+                          <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className="mb-2"
                           >
-                            <CardContent>
-                              <span className="font-bold">{task.title}</span>
-                              <br />
-                              <span className="text-gray-500">
-                                {task.description}
-                              </span>
-                            </CardContent>
-                          </Card>
+
+                              <div className=" flex items-center space-x-4 rounded-md border p-4">
+                                <div className="flex-1 space-y-1">
+                                  <p className="text-sm font-medium leading-none">
+                                    {task.title}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {task.description}
+                                  </p>
+                                </div>
+                              </div>
+                          </div>
                         )}
                       </Draggable>
                     ))}

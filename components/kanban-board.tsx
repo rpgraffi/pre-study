@@ -1,16 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Task } from "@/models/task_model";
+import { SessionManager } from "@/lib/session-manager";
+import { SessionSelector } from "./session-selector";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Session } from "@/lib/session-manager";
+import { KanbanAnalyzer } from "./kanban-analyzer";
+import { textToSpeech } from "@/lib/speech-service";
 
 interface Column {
   id: string;
   title: string;
   tasks: Task[];
+  colorClass: string;
 }
 
 interface KanbanBoardProps {
@@ -20,7 +33,15 @@ interface KanbanBoardProps {
 
 export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   const [columns, setColumns] = useState<Column[]>([]);
-  const [newTaskContent, setNewTaskContent] = useState("");
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskDescription, setNewTaskDescription] = useState("");
+  const [sessionName, setSessionName] = useState("");
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [geminiResponse, setGeminiResponse] = useState<string>("");
 
   useEffect(() => {
     const loadSavedState = () => {
@@ -33,21 +54,25 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
           id: "building-blocks",
           title: "Building Blocks",
           tasks: initialTasks,
+          colorClass: "bg-gray-100",
         },
         {
           id: "essential",
           title: "Essential",
           tasks: [],
+          colorClass: "bg-green-50",
         },
         {
           id: "semi-important",
           title: "Semi Important",
           tasks: [],
+          colorClass: "bg-yellow-50",
         },
         {
           id: "unnecessary",
           title: "Unnecessary",
           tasks: [],
+          colorClass: "bg-red-50",
         },
       ];
     };
@@ -67,21 +92,25 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
         id: "building-blocks",
         title: "Building Blocks",
         tasks: initialTasks,
+        colorClass: "bg-gray-100",
       },
       {
         id: "essential",
         title: "Essential",
         tasks: [],
+        colorClass: "bg-green-50",
       },
       {
         id: "semi-important",
         title: "Semi Important",
         tasks: [],
+        colorClass: "bg-yellow-50",
       },
       {
         id: "unnecessary",
         title: "Unnecessary",
         tasks: [],
+        colorClass: "bg-red-50",
       },
     ]);
     localStorage.removeItem(`kanban-${useCaseId}`);
@@ -136,12 +165,12 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   };
 
   const addTask = () => {
-    if (!newTaskContent.trim()) return;
+    if (!newTaskTitle.trim()) return;
 
     const newTask: Task = {
       id: Date.now().toString(),
-      title: newTaskContent,
-      description: "",
+      title: newTaskTitle,
+      description: newTaskDescription,
       step: "building-blocks",
     };
 
@@ -153,28 +182,172 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
       )
     );
 
-    setNewTaskContent("");
+    setNewTaskTitle("");
+    setNewTaskDescription("");
+  };
+
+  const handleSaveSession = async () => {
+    if (!sessionName.trim()) return;
+    await SessionManager.saveSession(sessionName, columns, selectedSession?.id);
+    setSessionName("");
+    setShowSaveDialog(false);
+  };
+
+  const handleLoadSession = (session: Session) => {
+    setSelectedSession(session);
+    setSessionName(session.name);
+    setColumns(session.columns);
+  };
+
+  const handleOpenSaveDialog = () => {
+    setSessionName(selectedSession?.name || "");
+    setShowSaveDialog(true);
+  };
+
+  const handleNewSession = () => {
+    setSelectedSession(null);
+    setSessionName("");
+    setShowSaveDialog(true);
+  };
+
+  const handleSpeech = async () => {
+    if (!geminiResponse) return;
+    try {
+      const url = await textToSpeech(geminiResponse);
+      setAudioUrl(url);
+    } catch (error) {
+      console.error("Error generating speech:", error);
+    }
+  };
+
+  const handlePlay = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const handleStop = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  };
+
+  const handleReplay = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
   };
 
   return (
     <div className="p-0">
       <div className="flex gap-4 mb-4">
         <Input
-          value={newTaskContent}
-          onChange={(e) => setNewTaskContent(e.target.value)}
+          value={newTaskTitle}
+          onChange={(e) => setNewTaskTitle(e.target.value)}
           placeholder="Enter new task..."
           className="max-w-sm"
         />
+        <Input
+          value={newTaskDescription}
+          onChange={(e) => setNewTaskDescription(e.target.value)}
+          placeholder="Enter new task description..."
+          className="max-w-sm"
+        />
         <Button onClick={addTask}>Add Task</Button>
+        <div className="flex-1"></div>
         <Button variant="destructive" onClick={resetBoard}>
           Reset Board
         </Button>
+
+        <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+          <DialogTrigger asChild>
+            <Button variant="outline" onClick={handleOpenSaveDialog}>
+              Save Session
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {selectedSession ? "Update Session" : "New Session"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex gap-2 mt-4">
+              <Input
+                value={sessionName}
+                onChange={(e) => setSessionName(e.target.value)}
+                placeholder={
+                  selectedSession
+                    ? "Update session name..."
+                    : "Enter session name..."
+                }
+              />
+              <Button onClick={handleSaveSession}>
+                {selectedSession ? "Update" : "Save"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <SessionSelector
+          onSelectSession={handleLoadSession}
+          onNewSession={handleNewSession}
+        />
+      </div>
+
+      <div className="mb-4">
+        <KanbanAnalyzer
+          columns={columns}
+          onResponse={(response) => setGeminiResponse(response)}
+        />
+        {geminiResponse && (
+          <div className="mt-4 flex items-center gap-2">
+            <Button onClick={handleSpeech} variant="outline">
+              Generate Speech
+            </Button>
+            {audioUrl && (
+              <div className="flex items-center gap-2">
+                <audio
+                  ref={audioRef}
+                  src={audioUrl}
+                  onEnded={() => setIsPlaying(false)}
+                />
+                <Button
+                  onClick={handlePlay}
+                  disabled={isPlaying}
+                  variant="outline"
+                  size="sm"
+                >
+                  Play
+                </Button>
+                <Button
+                  onClick={handleStop}
+                  disabled={!isPlaying}
+                  variant="outline"
+                  size="sm"
+                >
+                  Stop
+                </Button>
+                <Button onClick={handleReplay} variant="outline" size="sm">
+                  Replay
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="grid grid-cols-4 gap-4">
           {columns.map((column) => (
-            <Card key={column.id} className="min-h-[500px] min-w-[300px]">
+            <Card
+              key={column.id}
+              className={`min-h-[500px] min-w-[300px] ${column.colorClass}`}
+            >
               <CardHeader>
                 <CardTitle>{column.title}</CardTitle>
               </CardHeader>
@@ -198,17 +371,16 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
                             {...provided.dragHandleProps}
                             className="mb-2"
                           >
-
-                              <div className=" flex items-center space-x-4 rounded-md border p-4">
-                                <div className="flex-1 space-y-1">
-                                  <p className="text-sm font-medium leading-none">
-                                    {task.title}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {task.description}
-                                  </p>
-                                </div>
+                            <div className="flex items-center space-x-4 rounded-md border p-4 backdrop-blur-sm bg-white/80">
+                              <div className="flex-1 space-y-1">
+                                <p className="text-sm font-medium leading-none">
+                                  {task.title}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {task.description}
+                                </p>
                               </div>
+                            </div>
                           </div>
                         )}
                       </Draggable>

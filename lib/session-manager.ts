@@ -1,4 +1,4 @@
-import { Column } from "@/models/kanban_model";
+import { Column } from "@/models/column_model";
 
 export interface Session {
   id: string;

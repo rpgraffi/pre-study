@@ -6,6 +6,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Task } from "@/models/task_model";
+import { Column } from "@/models/column_model";
 import { SessionManager } from "@/lib/session-manager";
 import { SessionSelector } from "./session-selector";
 import {
@@ -18,13 +19,8 @@ import {
 import { Session } from "@/lib/session-manager";
 import { KanbanAnalyzer } from "./kanban-analyzer";
 import { textToSpeech } from "@/lib/speech-service";
-
-interface Column {
-  id: string;
-  title: string;
-  tasks: Task[];
-  colorClass: string;
-}
+import { BatteryCharging, GripVertical } from "lucide-react";
+import { TaskCard } from "./task-card";
 
 interface KanbanBoardProps {
   initialTasks: Task[];
@@ -348,7 +344,7 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
               key={column.id}
               className={`min-h-[500px] min-w-[300px] ${column.colorClass}`}
             >
-              <CardHeader>
+              <CardHeader className="px-6">
                 <CardTitle>{column.title}</CardTitle>
               </CardHeader>
               <Droppable droppableId={column.id}>
@@ -356,7 +352,7 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
                   <CardContent
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className="flex-1 h-[calc(100%-4rem)]"
+                    className="flex-1 px-4 h-[calc(100%-4rem)]"
                   >
                     {column.tasks.map((task, index) => (
                       <Draggable
@@ -365,23 +361,12 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
                         index={index}
                       >
                         {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className="mb-2"
-                          >
-                            <div className="flex items-center space-x-4 rounded-md border p-4 backdrop-blur-sm bg-white/80">
-                              <div className="flex-1 space-y-1">
-                                <p className="text-sm font-medium leading-none">
-                                  {task.title}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {task.description}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
+                          <TaskCard
+                            task={task}
+                            dragHandleProps={provided.dragHandleProps}
+                            draggableProps={provided.draggableProps}
+                            innerRef={provided.innerRef}
+                          />
                         )}
                       </Draggable>
                     ))}

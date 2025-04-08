@@ -38,7 +38,7 @@ export function KanbanAnalyzer({ columns, onResponse }: KanbanAnalyzerProps) {
 
   return (
     <div className="space-y-4">
-      <Button onClick={handleAnalyze} disabled={isLoading} className="w-full">
+      <Button onClick={handleAnalyze} disabled={isLoading}>
         {isLoading ? "Analyzing..." : "Analyze Board"}
       </Button>
 

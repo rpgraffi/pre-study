@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Task } from "@/models/task_model";
@@ -19,7 +24,6 @@ import {
 import { Session } from "@/lib/session-manager";
 import { KanbanAnalyzer } from "./kanban-analyzer";
 import { textToSpeech } from "@/lib/speech-service";
-import { BatteryCharging, GripVertical } from "lucide-react";
 import { TaskCard } from "./task-card";
 
 interface KanbanBoardProps {
@@ -112,7 +116,7 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
     localStorage.removeItem(`kanban-${useCaseId}`);
   };
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
     const { source, destination } = result;

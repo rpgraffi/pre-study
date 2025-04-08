@@ -1,11 +1,15 @@
 import { Task } from "@/models/task_model";
 import { Zap, Navigation, LucideIcon, User, Car } from "lucide-react";
+import {
+  DraggableProvidedDragHandleProps,
+  DraggableProvidedDraggableProps,
+} from "@hello-pangea/dnd";
 
 interface TaskCardProps {
   task: Task;
-  dragHandleProps: any;
-  draggableProps: any;
-  innerRef: any;
+  dragHandleProps: DraggableProvidedDragHandleProps | null;
+  draggableProps: DraggableProvidedDraggableProps;
+  innerRef: React.Ref<HTMLDivElement>;
 }
 
 interface StepStyle {
@@ -53,13 +57,15 @@ export function TaskCard({
       {...dragHandleProps}
       className="mb-1"
     >
-      <div className="flex items-center space-x-4 rounded-md border pl-3 pr-4 pt-3.5 pb-3 backdrop-blur-md bg-white/60"> 
+      <div className="flex items-center space-x-4 rounded-md border pl-3 pr-4 pt-3.5 pb-3 backdrop-blur-md bg-white/60">
         <div className="flex-1 flex items-center space-x-2">
           <div className="flex items-center justify-center">
             <Icon className={color + " w-5 h-5 mr-1"} />
           </div>
           <div>
-            <p className="text-sm font-medium leading-none mb-0.5">{task.title}</p>
+            <p className="text-sm font-medium leading-none mb-0.5">
+              {task.title}
+            </p>
             <p className="text-sm text-muted-foreground">{task.description}</p>
           </div>
         </div>

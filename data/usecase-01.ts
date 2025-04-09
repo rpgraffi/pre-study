@@ -10,7 +10,7 @@ export const tasks: Task[] = [
     { id: "05", title: "Confirmation", description: "Selected", step: "charging" },
     { id: "06", title: "Name", description: "AC Mer Germany GmbH", step: "charging" },
     { id: "07", title: "Entfernung", description: "8 km", step: "charging" },
-    { id: "08", title: "Straße", description: "Über A99...", step: "charging" },
+    { id: "08", title: "Straße", description: "über A99...", step: "charging" },
     { id: "09", title: "Fahrtdauer ", description: "13 Minuten", step: "charging" },
     { id: "10", title: "Umweg zum Laden", description: "5 minuten", step: "charging" },
     { id: "11", title: "Rating", description: "3.5 Sterne, 40 Bewertungen", step: "charging" },
@@ -21,7 +21,7 @@ export const tasks: Task[] = [
     { id: "15", title: "Ankuftszeit", description: "14:32", step: "destination" },
     { id: "16", title: "Dauer", description: "1 Stunde 20 Minuten", step: "destination" },
     { id: "17", title: "Entfernung", description: "224 km", step: "destination" },
-    { id: "18", title: "Straße", description: "Über A99...", step: "destination" },
+    { id: "18", title: "Straße", description: "über A99...", step: "destination" },
     { id: "19", title: "Adresse", description: "Stuttgarterstr. 1a", step: "destination" },
 
     { id: "20", title: "Start Navigation", description: "Navigate...", step: "destination" },

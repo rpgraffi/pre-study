@@ -25,7 +25,7 @@ import { Session } from "@/lib/session-manager";
 import { KanbanAnalyzer } from "./kanban-analyzer";
 import { textToSpeech } from "@/lib/speech-service";
 import { TaskCard } from "./task-card";
-
+import { Separator } from "@/components/ui/separator";
 interface KanbanBoardProps {
   initialTasks: Task[];
   useCaseId: string;
@@ -43,38 +43,41 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [geminiResponse, setGeminiResponse] = useState<string>("");
 
+
+  const initialColumns = [
+    {
+      id: "building-blocks",
+      title: "Bausteine",
+      tasks: initialTasks,
+      colorClass: "bg-gray-100",
+    },
+    {
+      id: "essential",
+      title: "Unverzichtbar",
+      tasks: [],
+      colorClass: "bg-green-50",
+    },
+    {
+      id: "semi-important",
+      title: "Wichtig, aber nicht kritisch",
+      tasks: [],
+      colorClass: "bg-yellow-50",
+    },
+    {
+      id: "unnecessary",
+      title: "Weglassen",
+      tasks: [],
+      colorClass: "bg-red-50",
+    },
+  ]
+
   useEffect(() => {
     const loadSavedState = () => {
       const savedState = localStorage.getItem(`kanban-${useCaseId}`);
       if (savedState) {
         return JSON.parse(savedState);
       }
-      return [
-        {
-          id: "building-blocks",
-          title: "Building Blocks",
-          tasks: initialTasks,
-          colorClass: "bg-gray-100",
-        },
-        {
-          id: "essential",
-          title: "Essential",
-          tasks: [],
-          colorClass: "bg-green-50",
-        },
-        {
-          id: "semi-important",
-          title: "Semi Important",
-          tasks: [],
-          colorClass: "bg-yellow-50",
-        },
-        {
-          id: "unnecessary",
-          title: "Unnecessary",
-          tasks: [],
-          colorClass: "bg-red-50",
-        },
-      ];
+      return initialColumns;
     };
 
     setColumns(loadSavedState());
@@ -87,32 +90,7 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   }, [columns, useCaseId]);
 
   const resetBoard = () => {
-    setColumns([
-      {
-        id: "building-blocks",
-        title: "Building Blocks",
-        tasks: initialTasks,
-        colorClass: "bg-gray-100",
-      },
-      {
-        id: "essential",
-        title: "Essential",
-        tasks: [],
-        colorClass: "bg-green-50",
-      },
-      {
-        id: "semi-important",
-        title: "Semi Important",
-        tasks: [],
-        colorClass: "bg-yellow-50",
-      },
-      {
-        id: "unnecessary",
-        title: "Unnecessary",
-        tasks: [],
-        colorClass: "bg-red-50",
-      },
-    ]);
+    setColumns(initialColumns);
     localStorage.removeItem(`kanban-${useCaseId}`);
   };
 
@@ -244,8 +222,8 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   };
 
   return (
-    <div className="p-0">
-      <div className="flex gap-4 mb-4">
+    <div className="pb-8">
+      <div className="flex gap-2 mb-12">
         <Input
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
@@ -258,11 +236,9 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
           placeholder="Enter new task description..."
           className="max-w-sm"
         />
-        <Button onClick={addTask}>Add Task</Button>
-        <div className="flex-1"></div>
-        <Button variant="destructive" onClick={resetBoard}>
-          Reset Board
-        </Button>
+        <Button variant="secondary" onClick={addTask}>Add Task</Button>
+
+        <div className="flex-1 min-w-12"></div>
 
         <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
           <DialogTrigger asChild>
@@ -297,6 +273,9 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
           onSelectSession={handleLoadSession}
           onNewSession={handleNewSession}
         />
+        <Button variant="secondary" className="hover:bg-red-200 hover:text-red-800" onClick={resetBoard}>
+          Reset Board
+        </Button>
       </div>
 
       <div className="mb-4">
@@ -342,15 +321,18 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
       </div>
 
       <DragDropContext onDragEnd={onDragEnd}>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 gap-2">
           {columns.map((column) => (
             <Card
               key={column.id}
-              className={`min-h-[500px] min-w-[300px] ${column.colorClass}`}
+              className={`min-h-[500px] min-w-[300px] gap-4 py-4 ${column.colorClass}`}
             >
-              <CardHeader className="px-6">
+              <CardHeader className="px-6 gap-0">
                 <CardTitle>{column.title}</CardTitle>
               </CardHeader>
+
+              <Separator />
+
               <Droppable droppableId={column.id}>
                 {(provided) => (
                   <CardContent

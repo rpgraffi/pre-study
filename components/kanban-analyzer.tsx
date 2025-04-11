@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { analyzeKanbanBoard } from "@/lib/gemini-service";
-import { Column } from "@/lib/gemini-service";
+import { Column } from "@/models/column_model";
+import { analyzeKanbanAction } from "@/lib/actions/gemini";
 
 interface KanbanAnalyzerProps {
   columns: Column[];
@@ -19,15 +19,16 @@ export function KanbanAnalyzer({ columns, onResponse }: KanbanAnalyzerProps) {
     setAnalysis("");
 
     try {
-      const result = await analyzeKanbanBoard(columns);
-      let fullResponse = "";
-
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        fullResponse += chunkText;
-        setAnalysis(fullResponse);
-        onResponse(fullResponse);
+      const result = await analyzeKanbanAction(columns);
+      if (result.error) {
+        console.error("Error during analysis:", result.error);
+        setAnalysis("Error analyzing the Kanban board. Please try again.");
+        return;
       }
+
+      const response = result.response || "";
+      setAnalysis(response);
+      onResponse(response);
     } catch (error) {
       console.error("Error during analysis:", error);
       setAnalysis("Error analyzing the Kanban board. Please try again.");

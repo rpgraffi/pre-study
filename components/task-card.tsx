@@ -1,5 +1,13 @@
 import { Task } from "@/models/task_model";
-import { Zap, Navigation, LucideIcon, User, Car } from "lucide-react";
+import {
+  Zap,
+  LucideIcon,
+  User,
+  Car,
+  Route,
+  SquareDashedMousePointer,
+  Goal,
+} from "lucide-react";
 import {
   DraggableProvidedDragHandleProps,
   DraggableProvidedDraggableProps,
@@ -19,20 +27,45 @@ interface StepStyle {
 
 const getStyleForStep = (step: string): StepStyle => {
   switch (step) {
-    case "vehicle":
+    case "get_vehicle_state:adress":
       return {
         icon: Car,
         color: "text-purple-600",
       };
-    case "charging":
+    case "get_routes:destination":
+      return {
+        icon: SquareDashedMousePointer,
+        color: "text-blue-600",
+      };
+    case "get_routes:destination-route_1":
+      return {
+        icon: Route,
+        color: "text-blue-600",
+      };
+    case "get_places:charging":
+      return {
+        icon: SquareDashedMousePointer,
+        color: "text-emerald-600",
+      };
+    case "get_places:charging-place_1":
       return {
         icon: Zap,
         color: "text-emerald-600",
       };
+    case "get_routes:destination_with_charging":
+      return {
+        icon: SquareDashedMousePointer,
+        color: "text-red-600",
+      };
+    case "get_routes:destination_with_charging-route_1":
+      return {
+        icon: Goal,
+        color: "text-red-600",
+      };
     case "destination":
       return {
-        icon: Navigation,
-        color: "text-blue-600",
+        icon: SquareDashedMousePointer,
+        color: "text-amber-600",
       };
     default:
       return {

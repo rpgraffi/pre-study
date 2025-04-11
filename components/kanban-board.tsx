@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/dialog";
 import { Session } from "@/lib/session-manager";
 import { KanbanAnalyzer } from "./kanban-analyzer";
-import { textToSpeech } from "@/lib/speech-service";
+import { generateSpeechAction } from "@/lib/actions/tts";
 import { TaskCard } from "./task-card";
 import { Separator } from "@/components/ui/separator";
+
 interface KanbanBoardProps {
   initialTasks: Task[];
   useCaseId: string;
@@ -42,7 +43,6 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [geminiResponse, setGeminiResponse] = useState<string>("");
-
 
   const initialColumns = [
     {
@@ -69,7 +69,7 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
       tasks: [],
       colorClass: "bg-red-50",
     },
-  ]
+  ];
 
   useEffect(() => {
     const loadSavedState = () => {
@@ -81,7 +81,7 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
     };
 
     setColumns(loadSavedState());
-  }, [initialTasks, useCaseId]);
+  }, [initialTasks, useCaseId, initialColumns]);
 
   useEffect(() => {
     if (columns.length > 0) {
@@ -191,8 +191,16 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   const handleSpeech = async () => {
     if (!geminiResponse) return;
     try {
-      const url = await textToSpeech(geminiResponse);
-      setAudioUrl(url);
+      const result = await generateSpeechAction(geminiResponse);
+      if (result.error) {
+        console.error("Speech generation failed:", result.error);
+        return;
+      }
+      setAudioUrl(result.audioUrl || null);
+
+      if (audioRef.current) {
+        audioRef.current.load();
+      }
     } catch (error) {
       console.error("Error generating speech:", error);
     }
@@ -236,7 +244,9 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
           placeholder="Enter new task description..."
           className="max-w-sm"
         />
-        <Button variant="secondary" onClick={addTask}>Add Task</Button>
+        <Button variant="secondary" onClick={addTask}>
+          Add Task
+        </Button>
 
         <div className="flex-1 min-w-12"></div>
 
@@ -273,7 +283,11 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
           onSelectSession={handleLoadSession}
           onNewSession={handleNewSession}
         />
-        <Button variant="secondary" className="hover:bg-red-200 hover:text-red-800" onClick={resetBoard}>
+        <Button
+          variant="secondary"
+          className="hover:bg-red-200 hover:text-red-800"
+          onClick={resetBoard}
+        >
           Reset Board
         </Button>
       </div>

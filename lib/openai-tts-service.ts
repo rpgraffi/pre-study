@@ -17,7 +17,7 @@ export async function openAITextToSpeech(
     const {
       voice = 'echo',
       model = 'gpt-4o-mini-tts',
-      instructions = 'Du bist ein Sprachassistent, der schnell und freundlich spricht. Du befindeest dich in einem Fahrzeug und sprichst mit dem Fahrer. Relaxed and reassuring, keeping things light even when the customer is frustrated.',
+      instructions = 'Die Stimme soll entspannt, freundlich und sympathisch klingen – wie ein guter Freund, der mitfährt. Der Sprachassistent spricht in einem angenehm flotten, aber nie gehetzten Tempo – lebendig, aber nicht aufdringlich. Die Tonlage ist warm, zugewandt und beruhigend, mit einer natürlichen Intonation. Er reagiert verständnisvoll, auch wenn der Fahrer frustriert ist, und vermittelt stets ein Gefühl von Vertrautheit und positiver Gelassenheit – fast so, als würde man sich schon lange kennen. Der Assistent hält die Stimmung locker, charmant und unterstützend – genau richtig für entspannte Fahrten oder stressige Momente im Straßenverkehr.',
       responseFormat = 'mp3'
     } = options;
 

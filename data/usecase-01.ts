@@ -18,7 +18,7 @@ export const tasks: Task[] = [
     
     { id: "200", title: "Anzahl Ladeorte", description: "2 Ergebnisse", step: "get_places:charging" },
     { id: "201", title: "Auswahl", description: "Wähle ersten Ladeplatz", step: "get_places:charging" },
-    { id: "202", title: "Begründung", description: "Günstigster Ladeplatz", step: "get_places:charging" },
+    { id: "202", title: "Begründung", description: "Beste Bewertung", step: "get_places:charging" },
     
     { id: "204", title: "Ankuftszeit", description: "13:43", step: "get_places:charging-place_1" },
     { id: "205", title: "Preis", description: "60 cent pro kwh", step: "get_places:charging-place_1" },
@@ -44,5 +44,5 @@ export const tasks: Task[] = [
     { id: "308", title: "Adresse", description: "Stuttgarterstr. 1a", step: "get_routes:destination_with_charging-route_1" },
     
     
-    { id: "400", title: "Start Navigation", description: "Navigate...", step: "destination" },
+    { id: "400", title: "Start Navigation", description: "Starte Navigation...", step: "destination" },
 ];

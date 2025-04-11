@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DragDropContext,
@@ -14,6 +14,7 @@ import { Task } from "@/models/task_model";
 import { Column } from "@/models/column_model";
 import { SessionManager } from "@/lib/session-manager";
 import { SessionSelector } from "./session-selector";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -41,35 +42,39 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isGeneratingSpeech, setIsGeneratingSpeech] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [geminiResponse, setGeminiResponse] = useState<string>("");
 
-  const initialColumns = [
-    {
-      id: "building-blocks",
-      title: "Bausteine",
-      tasks: initialTasks,
-      colorClass: "bg-gray-100",
-    },
-    {
-      id: "essential",
-      title: "Unverzichtbar",
-      tasks: [],
-      colorClass: "bg-green-50",
-    },
-    {
-      id: "semi-important",
-      title: "Wichtig, aber nicht kritisch",
-      tasks: [],
-      colorClass: "bg-yellow-50",
-    },
-    {
-      id: "unnecessary",
-      title: "Weglassen",
-      tasks: [],
-      colorClass: "bg-red-50",
-    },
-  ];
+  const initialColumns = useMemo(
+    () => [
+      {
+        id: "building-blocks",
+        title: "Bausteine",
+        tasks: initialTasks,
+        colorClass: "bg-gray-100",
+      },
+      {
+        id: "essential",
+        title: "Unverzichtbar",
+        tasks: [],
+        colorClass: "bg-green-50",
+      },
+      {
+        id: "semi-important",
+        title: "Wichtig, aber nicht kritisch",
+        tasks: [],
+        colorClass: "bg-yellow-50",
+      },
+      {
+        id: "unnecessary",
+        title: "Weglassen",
+        tasks: [],
+        colorClass: "bg-red-50",
+      },
+    ],
+    [initialTasks]
+  );
 
   useEffect(() => {
     const loadSavedState = () => {
@@ -191,6 +196,7 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
   const handleSpeech = async () => {
     if (!geminiResponse) return;
     try {
+      setIsGeneratingSpeech(true);
       const result = await generateSpeechAction(geminiResponse);
       if (result.error) {
         console.error("Speech generation failed:", result.error);
@@ -203,6 +209,8 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
       }
     } catch (error) {
       console.error("Error generating speech:", error);
+    } finally {
+      setIsGeneratingSpeech(false);
     }
   };
 
@@ -296,11 +304,23 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
         <KanbanAnalyzer
           columns={columns}
           onResponse={(response) => setGeminiResponse(response)}
+          useCase={useCaseId}
         />
         {geminiResponse && (
           <div className="mt-4 flex items-center gap-2">
-            <Button onClick={handleSpeech} variant="outline">
-              Generate Speech
+            <Button
+              onClick={handleSpeech}
+              variant="outline"
+              disabled={isGeneratingSpeech}
+            >
+              {isGeneratingSpeech ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Please wait
+                </>
+              ) : (
+                "Generate Speech"
+              )}
             </Button>
             {audioUrl && (
               <div className="flex items-center gap-2">

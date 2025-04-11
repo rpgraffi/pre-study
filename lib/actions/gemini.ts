@@ -18,11 +18,24 @@ const generationConfig = {
   maxOutputTokens: 2048,
 };
 
-export async function analyzeKanbanAction(columns: Column[]): Promise<{ response?: string; error?: string }> {
+export async function analyzeKanbanAction(columns: Column[], useCase: string): Promise<{ response?: string; error?: string }> {
   try {
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash",
-      systemInstruction: `You are a voice assistant in a car for a study. You review information pieces with a specific use case and then try to build a logical and very consice sentence (audio response) only based on the snippets provided. Snippets from the "Essential" must be included in the sentence, "Semi Important" snippets are optional but if included very briefly. IMPORTANT: ONLY REPLY WITH THE SENTENCE, NOTHING ELSE. RESPOND ONLY IN GERMAN. WRITE OUT ABBREVATIONS LIKE "kwh" or "km". WRITE NUMBERS AS NUMBERS like "100" instead of "one hundred". DONT USE A DIFFERENT LANGUAGE THAN GERMAN.`
+      systemInstruction: 
+      `
+      # You are a voice assistant in a car for a study. This is the current use case: "${useCase}". 
+      You review bullet points for the use case and use ALL of them to build an short and consice answer that would sound nice and consice as an audio response.
+      - The Task Id help you to know in which order the snippets are processed.
+      - The Task Step gives a hint of the function and the properties.
+
+      ## Writing style
+      - Act like you know each other.
+      - SHORT AND CONSICE.
+      - IMPORTANT: ONLY REPLY WITH THE SENTENCE, NOTHING ELSE. RESPOND ONLY IN GERMAN. 
+      - WRITE OUT ABBREVATIONS LIKE "kwh" or "km". 
+      - WRITE NUMBERS AS NUMBERS like "100" instead of "one hundred". 
+      - DONT USE A DIFFERENT LANGUAGE THAN GERMAN.`
     });
 
     const chat = model.startChat({
@@ -33,7 +46,7 @@ export async function analyzeKanbanAction(columns: Column[]): Promise<{ response
     const formattedTasks = columns
       .filter(column => column.id === "essential")
       .map(column => {
-        const tasksList = column.tasks.map(task => `- ${task.title} (${task.description}) in step ${task.step}`).join('\n');
+        const tasksList = column.tasks.map(task => `- (${task.id}) ${task.title} (${task.description}) in step ${task.step}`).join('\n');
         return `${column.title}:\n${tasksList}`;
       }).join('\n\n');
 

@@ -8,9 +8,10 @@ import { analyzeKanbanAction } from "@/lib/actions/gemini";
 interface KanbanAnalyzerProps {
   columns: Column[];
   onResponse: (response: string) => void;
+  useCase: string;
 }
 
-export function KanbanAnalyzer({ columns, onResponse }: KanbanAnalyzerProps) {
+export function KanbanAnalyzer({ columns, onResponse, useCase }: KanbanAnalyzerProps) {
   const [analysis, setAnalysis] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -19,7 +20,7 @@ export function KanbanAnalyzer({ columns, onResponse }: KanbanAnalyzerProps) {
     setAnalysis("");
 
     try {
-      const result = await analyzeKanbanAction(columns);
+      const result = await analyzeKanbanAction(columns, useCase);
       if (result.error) {
         console.error("Error during analysis:", result.error);
         setAnalysis("Error analyzing the Kanban board. Please try again.");

@@ -12,7 +12,7 @@ export function MultiKanban() {
   const [activeTab, setActiveTab] = useState("usecase1");
 
   const headings = {
-    usecase1: "Find me the cheapest available charger on my way home",
+    usecase1: "Navigate home on the shortest route and find me the best rated charger on the way",
     usecase2: "Battery and Charging Management",
     usecase3: "Route Intelligence and Conditions",
     usecase4: "User Settings and Preferences",
@@ -36,16 +36,16 @@ export function MultiKanban() {
       </h2>
 
       <TabsContent value="usecase1">
-        <KanbanBoard initialTasks={useCase01Tasks} useCaseId="usecase1" />
+        <KanbanBoard initialTasks={useCase01Tasks} useCaseId={headings.usecase1} />
       </TabsContent>
       <TabsContent value="usecase2">
-        <KanbanBoard initialTasks={useCase02Tasks} useCaseId="usecase2" />
+        <KanbanBoard initialTasks={useCase02Tasks} useCaseId={headings.usecase2} />
       </TabsContent>
       <TabsContent value="usecase3">
-        <KanbanBoard initialTasks={useCase03Tasks} useCaseId="usecase3" />
+        <KanbanBoard initialTasks={useCase03Tasks} useCaseId={headings.usecase3} />
       </TabsContent>
       <TabsContent value="usecase4">
-        <KanbanBoard initialTasks={useCase04Tasks} useCaseId="usecase4" />
+        <KanbanBoard initialTasks={useCase04Tasks} useCaseId={headings.usecase4} />
       </TabsContent>
     </Tabs>
   );

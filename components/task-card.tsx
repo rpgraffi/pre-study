@@ -7,6 +7,12 @@ import {
   Route,
   SquareDashedMousePointer,
   Goal,
+  Utensils,
+  Globe,
+  UtensilsCrossed,
+  Calendar,
+  Mail,
+  Calculator,
 } from "lucide-react";
 import {
   DraggableProvidedDragHandleProps,
@@ -30,7 +36,7 @@ const getStyleForStep = (step: string): StepStyle => {
     case "get_vehicle_state:adress":
       return {
         icon: Car,
-        color: "text-purple-600",
+        color: "text-zinc-600",
       };
     case "get_routes:destination":
       return {
@@ -66,6 +72,56 @@ const getStyleForStep = (step: string): StepStyle => {
       return {
         icon: SquareDashedMousePointer,
         color: "text-amber-600",
+      };
+    case "get_places:fastfood-place_1":
+      return {
+        icon: Utensils,
+        color: "text-red-600",
+      };
+    case "get_places:fastfood":
+      return {
+        icon: SquareDashedMousePointer,
+        color: "text-red-600",
+      };
+    case "get_routes:destination_with_fastfood-route_1":
+      return {
+        icon: Route,
+        color: "text-amber-600",
+      };
+    case "search_web_content:web-search":
+      return {
+        icon: Globe,
+        color: "text-teal-600",
+      };
+    case "get_places:charging-place_with_restaurant_1":
+      return {
+        icon: UtensilsCrossed,
+        color: "text-red-600",
+      };
+    case "get_calendar:next_event":
+      return {
+        icon: Calendar,
+        color: "text-fuchsia-600",
+      };
+    case "search_email_content:email-search":
+      return {
+        icon: Mail,
+        color: "text-fuchsia-600",
+      };
+    case "calculate_distance:destination-route_1":
+      return {
+        icon: Calculator,
+        color: "text-violet-600",
+      };
+    case "get_contact:name":
+      return {
+        icon: User,
+        color: "text-red-600",
+      };
+    case "search_places:charging-place_1":
+      return {
+        icon: SquareDashedMousePointer,
+        color: "text-red-600",
       };
     default:
       return {

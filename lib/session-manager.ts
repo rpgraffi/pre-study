@@ -1,17 +1,23 @@
 import { Column } from "@/models/column_model";
 
+export interface BoardStates {
+  usecase1: Column[];
+  usecase2: Column[];
+  usecase3: Column[];
+}
+
 export interface Session {
   id: string;
   name: string;
   date: string;
-  columns: Column[];
+  columns: BoardStates;
 }
 
 export class SessionManager {
   private static readonly SESSIONS_KEY = "kanban-sessions";
   private static readonly SESSIONS_FOLDER = "sessions";
 
-  static async saveSession(name: string, columns: Column[], sessionId?: string): Promise<void> {
+  static async saveSession(name: string, columns: BoardStates, sessionId?: string): Promise<void> {
     const session: Session = {
       id: sessionId || Date.now().toString(),
       name,

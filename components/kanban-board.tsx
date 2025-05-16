@@ -13,17 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Task } from "@/models/task_model";
 import { Steps } from "@/models/steps_model";
 import { Column } from "@/models/column_model";
-import { SessionManager } from "@/lib/session-manager";
-import { SessionSelector } from "./session-selector";
 import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Session } from "@/lib/session-manager";
 import { KanbanAnalyzer } from "./kanban-analyzer";
 import { generateSpeechAction } from "@/lib/actions/tts";
 import { TaskCard } from "./task-card";
@@ -43,9 +33,6 @@ export function KanbanBoard({
   const [columns, setColumns] = useState<Column[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
-  const [sessionName, setSessionName] = useState("");
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isGeneratingSpeech, setIsGeneratingSpeech] = useState(false);
@@ -175,30 +162,6 @@ export function KanbanBoard({
     setNewTaskDescription("");
   };
 
-  const handleSaveSession = async () => {
-    if (!sessionName.trim()) return;
-    await SessionManager.saveSession(sessionName, columns, selectedSession?.id);
-    setSessionName("");
-    setShowSaveDialog(false);
-  };
-
-  const handleLoadSession = (session: Session) => {
-    setSelectedSession(session);
-    setSessionName(session.name);
-    setColumns(session.columns);
-  };
-
-  const handleOpenSaveDialog = () => {
-    setSessionName(selectedSession?.name || "");
-    setShowSaveDialog(true);
-  };
-
-  const handleNewSession = () => {
-    setSelectedSession(null);
-    setSessionName("");
-    setShowSaveDialog(true);
-  };
-
   const handleSpeech = async () => {
     if (!geminiResponse) return;
     try {
@@ -280,39 +243,6 @@ export function KanbanBoard({
 
         <div className="flex-1 min-w-12"></div>
 
-        <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-          <DialogTrigger asChild>
-            <Button variant="outline" onClick={handleOpenSaveDialog}>
-              Save Session
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {selectedSession ? "Update Session" : "New Session"}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="flex gap-2 mt-4">
-              <Input
-                value={sessionName}
-                onChange={(e) => setSessionName(e.target.value)}
-                placeholder={
-                  selectedSession
-                    ? "Update session name..."
-                    : "Enter session name..."
-                }
-              />
-              <Button onClick={handleSaveSession}>
-                {selectedSession ? "Update" : "Save"}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <SessionSelector
-          onSelectSession={handleLoadSession}
-          onNewSession={handleNewSession}
-        />
         <Button
           variant="secondary"
           className="hover:bg-red-200 hover:text-red-800"

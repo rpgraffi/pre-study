@@ -24,8 +24,8 @@ export const tasks: Task[] = [
     { id: "302", title: "Begründung", description: "Schnellste Route", step: "get_routes:destination" },
     { id: "303", title: "Begründung", description: "Kürzeste Route", step: "get_routes:destination" },
 
-    { id: "304", title: "Ankuftszeit (ohne Stopp)", description: "14:32", step: "get_routes:destination-route_1" },
-    { id: "305", title: "Dauer (ohne Stopp)", description: "1 Stunde 20 Minuten", step: "get_routes:destination-route_1" },
+    { id: "304", title: "Ankuftszeit (ohne Zwischenstopp)", description: "14:32", step: "get_routes:destination-route_1" },
+    { id: "305", title: "Dauer (ohne Zwischenstopp)", description: "1 Stunde 20 Minuten", step: "get_routes:destination-route_1" },
     { id: "306", title: "Entfernung", description: "224 km", step: "get_routes:destination-route_1" },
     { id: "307", title: "Straße", description: "über A99...", step: "get_routes:destination-route_1" },
     { id: "308", title: "Adresse", description: "Stuttgarterstr. 1a", step: "get_routes:destination-route_1" },

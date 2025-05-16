@@ -6,26 +6,25 @@ export const tasks: Task[] = [
 
     { id: "100", title: "Suche Kontakt", description: "", step: "get_contact:name" },
     { id: "101", title: "Anzahl Kontakte", description: "3 Kontakte", step: "get_contact:name" },
-    { id: "102", title: "Auswahl", description: "Frau Susanne Brommer", step: "get_contact:name" },
-    { id: "103", title: "Begründung", description: "Höchste Übereinstimmung", step: "get_contact:name" },
-    { id: "104", title: "Name", description: "Susanne Brommer", step: "get_contact:name" },
-    { id: "105", title: "Email", description: "susanne.brommer@bmw.de", step: "get_contact:name" },
+    { id: "102", title: "Begründung Kontakt Auswahl", description: "Höchste Übereinstimmung", step: "get_contact:name" },
+    { id: "103", title: "Name", description: "Susanne Brommer", step: "get_contact:name" },
+    { id: "104", title: "Email", description: "susanne.brommer@bmw.de", step: "get_contact:name" },
     
 
 
     { id: "200", title: "Suche E-Mail Content", description: "", step: "search_email_content:email-search" },
     { id: "201", title: "Suchbegriffe", description: "Adresse, Straße, Standort", step: "search_email_content:email-search" },
     { id: "202", title: "Ergebnis", description: "Zimmerstr. 1a, Ulm", step: "search_email_content:email-search" },
-    { id: "203", title: "Begründung", description: "Höchste Übereinstimmung", step: "search_email_content:email-search" },
+    { id: "203", title: "Begründung Adresse", description: "Höchste Übereinstimmung", step: "search_email_content:email-search" },
 
     
 
     { id: "300", title: "Plane Routen", description: "", step: "get_routes:destination" },
     { id: "301", title: "Anzahl Routen", description: "3 Routen", step: "get_routes:destination" },
-    { id: "302", title: "Begründung", description: "Schnellste Route", step: "get_routes:destination" },
+    { id: "302", title: "Begründung Routen Auswahl", description: "Schnellste Route", step: "get_routes:destination" },
 
-    { id: "303", title: "Ankuftszeit (ohne Stopp)", description: "14:32", step: "get_routes:destination-route_1" },
-    { id: "304", title: "Dauer (ohne Stopp)", description: "1 Stunde 20 Minuten", step: "get_routes:destination-route_1" },
+    { id: "303", title: "Ankuftszeit (ohne Zwischenstopp)", description: "14:32", step: "get_routes:destination-route_1" },
+    { id: "304", title: "Dauer (ohne Zwischenstopp)", description: "1 Stunde 5 Minuten", step: "get_routes:destination-route_1" },
     { id: "305", title: "Entfernung", description: "224 km", step: "get_routes:destination-route_1" },
     { id: "306", title: "Straße", description: "über A99...", step: "get_routes:destination-route_1" },
     { id: "307", title: "Adresse", description: "Stuttgarterstr. 1a", step: "get_routes:destination-route_1" },

@@ -76,12 +76,12 @@ const getStyleForStep = (step: string): StepStyle => {
     case "get_places:fastfood-place_1":
       return {
         icon: Utensils,
-        color: "text-red-600",
+        color: "text-green-600",
       };
     case "get_places:fastfood":
       return {
         icon: SquareDashedMousePointer,
-        color: "text-red-600",
+        color: "text-green-600",
       };
     case "get_routes:destination_with_fastfood-route_1":
       return {
@@ -91,17 +91,17 @@ const getStyleForStep = (step: string): StepStyle => {
     case "search_web_content:web-search":
       return {
         icon: Globe,
-        color: "text-teal-600",
+        color: "text-fuchsia-600",
       };
     case "get_places:charging-place_with_restaurant_1":
       return {
         icon: UtensilsCrossed,
-        color: "text-red-600",
+        color: "text-green-600",
       };
     case "get_calendar:next_event":
       return {
         icon: Calendar,
-        color: "text-fuchsia-600",
+        color: "text-red-600",
       };
     case "search_email_content:email-search":
       return {
@@ -111,7 +111,7 @@ const getStyleForStep = (step: string): StepStyle => {
     case "calculate_distance:destination-route_1":
       return {
         icon: Calculator,
-        color: "text-violet-600",
+        color: "text-yellow-600",
       };
     case "get_contact:name":
       return {
@@ -121,7 +121,7 @@ const getStyleForStep = (step: string): StepStyle => {
     case "search_places:charging-place_1":
       return {
         icon: SquareDashedMousePointer,
-        color: "text-red-600",
+        color: "text-green-600",
       };
     default:
       return {

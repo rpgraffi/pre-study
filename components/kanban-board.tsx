@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Task } from "@/models/task_model";
+import { Steps } from "@/models/steps_model";
 import { Column } from "@/models/column_model";
 import { SessionManager } from "@/lib/session-manager";
 import { SessionSelector } from "./session-selector";
@@ -31,9 +32,14 @@ import { Separator } from "@/components/ui/separator";
 interface KanbanBoardProps {
   initialTasks: Task[];
   useCaseId: string;
+  steps: Steps[];
 }
 
-export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
+export function KanbanBoard({
+  initialTasks,
+  useCaseId,
+  steps,
+}: KanbanBoardProps) {
   const [columns, setColumns] = useState<Column[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
@@ -239,6 +245,22 @@ export function KanbanBoard({ initialTasks, useCaseId }: KanbanBoardProps) {
 
   return (
     <div className="pb-8">
+      <div className="flex flex-col gap-2 mb-8">
+        {steps.map((step, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <div
+              className={`flex items-center justify-center w-6 h-6 rounded-full ${step.color} text-white`}
+            >
+              <span className="text-sm font-medium">{index + 1}</span>
+            </div>
+            <div className="text-sm">{step.title}</div>
+            {index < steps.length - 1 && (
+              <div className="absolute left-[1.25rem] top-[2.5rem] w-[1px] h-6 bg-gray-300" />
+            )}
+          </div>
+        ))}
+      </div>
+
       <div className="flex gap-2 mb-12">
         <Input
           value={newTaskTitle}

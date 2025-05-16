@@ -11,9 +11,36 @@ export function MultiKanban() {
   const [activeTab, setActiveTab] = useState("usecase1");
 
   const headings = {
-    usecase1: "Navigiere zur Arbeit auf der schnellsten Route und suche nach einem McDonalds.",
-    usecase2: "Bring mich schnell zu Frau Brommer, die Adresse hat Sie mir gemailt. Und plane eine Schnellladestation ein, falls der Akkustand unterwegs unter 20 % fällt.",
-    usecase3: "Bring mich zum Konzert aus meinem Kalender und finde vorher die letzte mögliche Ladestation mit Restaurant.",
+    usecase1:
+      "Navigiere zur Arbeit auf der schnellsten Route und suche nach einem McDonalds.",
+    usecase2:
+      "Bring mich schnell zu Frau Brommer, die Adresse hat Sie mir gemailt. Und plane eine Schnellladestation ein, falls der Akkustand unterwegs unter 20 % fällt.",
+    usecase3:
+      "Bring mich zum Konzert aus meinem Kalender und finde vorher die letzte mögliche Ladestation mit Restaurant.",
+  };
+
+  const steps = {
+    usecase1: [
+      { title: "Plane Route", color: "bg-blue-600" },
+      { title: "Suche Point of Interest", color: "bg-green-600" },
+      { title: "Starte Route", color: "bg-amber-600" },
+    ],
+    usecase2: [
+      { title: "Suche Kontakt", color: "bg-red-600" },
+      { title: "Durchsuche Emails", color: "bg-fuchsia-600" },
+      { title: "Plane Route", color: "bg-blue-600" },
+      { title: "Berechne bleibende Distanz", color: "bg-yellow-600" },
+      { title: "Suche Point of Interest", color: "bg-green-600" },
+      { title: "Starte Route", color: "bg-amber-600" },
+    ],
+    usecase3: [
+      { title: "Suche Kalender Event", color: "bg-red-600" },
+      { title: "Websuche", color: "bg-fuchsia-600" },
+      { title: "Plane Route", color: "bg-blue-600" },
+      { title: "Berechne bleibende Distanz", color: "bg-yellow-600" },
+      { title: "Suche Point of Interest", color: "bg-green-600" },
+      { title: "Starte Route", color: "bg-amber-600" },
+    ],
   };
 
   return (
@@ -33,13 +60,25 @@ export function MultiKanban() {
       </h2>
 
       <TabsContent value="usecase1">
-        <KanbanBoard initialTasks={useCase01Tasks} useCaseId={headings.usecase1} />
+        <KanbanBoard
+          initialTasks={useCase01Tasks}
+          useCaseId={headings.usecase1}
+          steps={steps.usecase1}
+        />
       </TabsContent>
       <TabsContent value="usecase2">
-        <KanbanBoard initialTasks={useCase02Tasks} useCaseId={headings.usecase2} />
+        <KanbanBoard
+          initialTasks={useCase02Tasks}
+          useCaseId={headings.usecase2}
+          steps={steps.usecase2}
+        />
       </TabsContent>
       <TabsContent value="usecase3">
-        <KanbanBoard initialTasks={useCase03Tasks} useCaseId={headings.usecase3} />
+        <KanbanBoard
+          initialTasks={useCase03Tasks}
+          useCaseId={headings.usecase3}
+          steps={steps.usecase3}
+        />
       </TabsContent>
     </Tabs>
   );

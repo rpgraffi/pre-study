@@ -6,10 +6,10 @@ export const tasks: Task[] = [
     { id: "100", title: "Plane Routen", description: "", step: "get_routes:destination" },
     { id: "101", title: "Anzahl Routen", description: "3 Routen", step: "get_routes:destination" },
     { id: "102", title: "Auswahl", description: "Wähle erste Route", step: "get_routes:destination" },
-    { id: "103", title: "Begründung", description: "Schnellste Route", step: "get_routes:destination" },
+    { id: "103", title: "Begründung Routen Auswahl", description: "Schnellste Route", step: "get_routes:destination" },
     
-    { id: "104", title: "Ankuftszeit (ohne Stopp)", description: "14:32", step: "get_routes:destination-route_1" },
-    { id: "105", title: "Dauer (ohne Stopp)", description: "1 Stunde 20 Minuten", step: "get_routes:destination-route_1" },
+    { id: "104", title: "Ankuftszeit (ohne Zwischenstopp)", description: "14:32", step: "get_routes:destination-route_1" },
+    { id: "105", title: "Dauer (ohne Zwischenstopp)", description: "1 Stunde 5 Minuten", step: "get_routes:destination-route_1" },
     { id: "106", title: "Entfernung", description: "224 km", step: "get_routes:destination-route_1" },
     { id: "107", title: "Straße", description: "über A99...", step: "get_routes:destination-route_1" },
     { id: "108", title: "Adresse", description: "Stuttgarterstr. 1a", step: "get_routes:destination-route_1" },
@@ -19,7 +19,7 @@ export const tasks: Task[] = [
     { id: "200", title: "Suche Restaurant", description: "", step: "get_places:fastfood" },
     { id: "201", title: "Info", description: "Entlang der Route", step: "get_places:fastfood" },
     { id: "202", title: "Orte gefunden", description: "3 Ergebnisse", step: "get_places:fastfood" },
-    { id: "203", title: "Begründung", description: "Einziger McDonalds", step: "get_places:fastfood" },
+    { id: "203", title: "Begründung Restaurant Auswahl", description: "Einziger McDonalds", step: "get_places:fastfood" },
     
     { id: "208", title: "Name", description: "McDonalds", step: "get_places:fastfood-place_1" },
     { id: "205", title: "Ankuftszeit beim Restaurant", description: "13:43", step: "get_places:fastfood-place_1" },

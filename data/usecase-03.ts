@@ -53,7 +53,7 @@ export const tasks: Task[] = [
     { id: "509", title: "Preis", description: "60 cent pro kwh", step: "get_places:charging-place_1" },
     { id: "510", title: "Adresse", description: "Ladestr. 1a", step: "get_places:charging-place_1" },
     { id: "511", title: "Bestätigen", description: "Ausgewählt", step: "get_places:charging-place_1" },
-    { id: "513", title: "Entfernung", description: "8 km", step: "get_places:charging-place_1" },
+    { id: "513", title: "Entfernung", description: "99 km", step: "get_places:charging-place_1" },
     { id: "514", title: "Straße", description: "über A99...", step: "get_places:charging-place_1" },
     { id: "515", title: "Fahrtdauer bis Ladestation", description: "13 Minuten", step: "get_places:charging-place_1" },
     { id: "516", title: "Umweg zum Laden", description: "5 minuten", step: "get_places:charging-place_1" },

@@ -58,7 +58,7 @@ export const tasks: Task[] = [
     { id: "601", title: "Dauer bis Ziel", description: "1 Stunde 20 Minuten", step: "get_routes:destination_with_fastfood-route_1" },
     { id: "602", title: "Entfernung bis Ziel", description: "224 km", step: "get_routes:destination_with_fastfood-route_1" },
     { id: "603", title: "Ziel-Straße", description: "über A99...", step: "get_routes:destination_with_fastfood-route_1" },
-    { id: "604", title: "Ziel-Adresse", description: "Stuttgarterstr. 1a", step: "get_routes:destination_with_fastfood-route_1" },
+    { id: "604", title: "Ziel-Adresse", description: "Zimmerstr. 1a, Ulm", step: "get_routes:destination_with_fastfood-route_1" },
     { id: "605", title: "Start Navigation", description: "Starte Navigation...", step: "destination" },
     
     

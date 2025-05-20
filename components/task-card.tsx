@@ -13,17 +13,22 @@ import {
   Calendar,
   Mail,
   Calculator,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import {
   DraggableProvidedDragHandleProps,
   DraggableProvidedDraggableProps,
 } from "@hello-pangea/dnd";
+import { useState } from "react";
 
 interface TaskCardProps {
   task: Task;
   dragHandleProps: DraggableProvidedDragHandleProps | null;
   draggableProps: DraggableProvidedDraggableProps;
   innerRef: React.Ref<HTMLDivElement>;
+  column?: string;
+  onToggleAuditive?: (taskId: string, value: boolean) => void;
 }
 
 interface StepStyle {
@@ -136,8 +141,21 @@ export function TaskCard({
   dragHandleProps,
   draggableProps,
   innerRef,
+  column,
+  onToggleAuditive,
 }: TaskCardProps) {
   const { icon: Icon, color } = getStyleForStep(task.step);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const isAuditivColumn = column === "essential";
+  const showToggle = isAuditivColumn && (isHovered || task.isAuditivVisible);
+
+  const handleToggleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleAuditive) {
+      onToggleAuditive(task.id, !task.isAuditivVisible);
+    }
+  };
 
   return (
     <div
@@ -145,8 +163,10 @@ export function TaskCard({
       {...draggableProps}
       {...dragHandleProps}
       className="mb-1"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex items-center space-x-4 rounded-md border pl-3 pr-4 pt-3.5 pb-3 backdrop-blur-md bg-white/90">
+      <div className="flex items-center space-x-4 rounded-md border pl-3 pr-4 pt-3.5 pb-3 backdrop-blur-md bg-white/90 relative">
         <div className="flex-1 flex items-center space-x-2">
           <div className="flex items-center justify-center">
             <Icon className={color + " w-5 h-5 mr-1"} />
@@ -158,6 +178,21 @@ export function TaskCard({
             <p className="text-sm text-muted-foreground">{task.description}</p>
           </div>
         </div>
+
+        {isAuditivColumn && (
+          <div
+            className={`absolute right-2 top-2 cursor-pointer ${
+              showToggle ? "opacity-100" : "opacity-0"
+            } transition-opacity`}
+            onClick={handleToggleClick}
+          >
+            {task.isAuditivVisible ? (
+              <Eye className="h-4 w-4 text-blue-500" />
+            ) : (
+              <EyeOff className="h-4 w-4 text-gray-400" />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

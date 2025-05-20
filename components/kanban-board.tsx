@@ -49,19 +49,19 @@ export function KanbanBoard({
       },
       {
         id: "essential",
-        title: "Unverzichtbar",
+        title: "Auditiv",
         tasks: [],
         colorClass: "bg-green-50",
       },
       {
         id: "semi-important",
-        title: "Wichtig, aber nicht kritisch",
+        title: "Visuell",
         tasks: [],
         colorClass: "bg-yellow-50",
       },
       {
         id: "unnecessary",
-        title: "Weglassen",
+        title: "On Demand",
         tasks: [],
         colorClass: "bg-red-50",
       },
@@ -138,6 +138,22 @@ export function KanbanBoard({
         })
       );
     }
+  };
+
+  const toggleAuditivVisibility = (taskId: string, value: boolean) => {
+    setColumns(
+      columns.map((col) => {
+        if (col.id === "essential") {
+          return {
+            ...col,
+            tasks: col.tasks.map((task) =>
+              task.id === taskId ? { ...task, isAuditivVisible: value } : task
+            ),
+          };
+        }
+        return col;
+      })
+    );
   };
 
   const addTask = () => {
@@ -338,6 +354,8 @@ export function KanbanBoard({
                             dragHandleProps={provided.dragHandleProps}
                             draggableProps={provided.draggableProps}
                             innerRef={provided.innerRef}
+                            column={column.id}
+                            onToggleAuditive={toggleAuditivVisibility}
                           />
                         )}
                       </Draggable>

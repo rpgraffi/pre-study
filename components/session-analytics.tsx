@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Trash2, FileText } from "lucide-react";
+import { Upload, Trash2, FileText, Download } from "lucide-react";
 import { Task } from "@/models/task_model";
 import { Column } from "@/models/column_model";
 
@@ -32,6 +32,7 @@ interface UploadedSession {
 interface SessionOccurrence {
   sessionName: string;
   columnType: "essential" | "semi-important" | "other";
+  isAuditivVisible?: boolean;
 }
 
 interface TaskAnalysis {
@@ -195,6 +196,7 @@ export function SessionAnalytics() {
                 existing.sessionOccurrences.push({
                   sessionName: session.name,
                   columnType,
+                  isAuditivVisible: task.isAuditivVisible,
                 });
               } else {
                 // Update to higher priority column type if needed
@@ -204,6 +206,8 @@ export function SessionAnalytics() {
                     existingSessionOccurrence.columnType === "other")
                 ) {
                   existingSessionOccurrence.columnType = columnType;
+                  existingSessionOccurrence.isAuditivVisible =
+                    task.isAuditivVisible;
                 }
               }
             } else {
@@ -221,6 +225,7 @@ export function SessionAnalytics() {
                   {
                     sessionName: session.name,
                     columnType,
+                    isAuditivVisible: task.isAuditivVisible,
                   },
                 ],
               });
@@ -269,18 +274,91 @@ export function SessionAnalytics() {
   };
 
   const getSessionBadgeColor = (
-    columnType: "essential" | "semi-important" | "other"
+    columnType: "essential" | "semi-important" | "other",
+    isAuditivVisible?: boolean
   ) => {
+    // Special case: gradient for auditive (essential) + isAuditivVisible
+    if (columnType === "essential" && isAuditivVisible) {
+      return "bg-gradient-to-br from-blue-500 to-green-500 text-white";
+    }
+
     switch (columnType) {
       case "essential":
-        return "bg-green-500 text-white";
+        return "bg-blue-500 text-white";
       case "semi-important":
-        return "bg-amber-500 text-white";
+        return "bg-green-500 text-white";
       case "other":
         return "bg-red-500 text-white";
       default:
         return "bg-gray-500 text-white";
     }
+  };
+
+  const sortSessionsNumerically = (sessions: UploadedSession[]) => {
+    return [...sessions].sort((a, b) => a.name.localeCompare(b.name));
+  };
+
+  const exportResults = () => {
+    if (analysis.length === 0) {
+      alert("No analysis results to export. Please generate analysis first.");
+      return;
+    }
+
+    const enabledSessions = uploadedSessions.filter(
+      (session) => session.enabled
+    );
+
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      totalSessions: enabledSessions.length,
+      useCases: analysis.map((useCaseData) => ({
+        useCase: useCaseData.useCase,
+        totalTasks: useCaseData.totalTasks,
+        averageImportance: useCaseData.averageImportance,
+        highImportanceTasks: useCaseData.highImportanceTasks,
+        tasks: useCaseData.tasks.map((task) => ({
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          step: task.step,
+          totalImportanceScore: task.totalImportanceScore,
+          occurrences: task.occurrences,
+          averageScore:
+            enabledSessions.length > 0
+              ? parseFloat(
+                  (task.totalImportanceScore / enabledSessions.length).toFixed(
+                    1
+                  )
+                )
+              : null,
+          sessionOccurrences: task.sessionOccurrences.map((so) => ({
+            sessionName: so.sessionName,
+            columnType: so.columnType,
+            columnDescription:
+              so.columnType === "essential"
+                ? "Auditiv"
+                : so.columnType === "semi-important"
+                ? "Visuell"
+                : "Other",
+          })),
+        })),
+      })),
+    };
+
+    // Create and download the JSON file
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(dataBlob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `session-analytics-${
+      new Date().toISOString().split("T")[0]
+    }.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -321,7 +399,7 @@ export function SessionAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {uploadedSessions.map((session) => (
+              {sortSessionsNumerically(uploadedSessions).map((session) => (
                 <div
                   key={session.id}
                   className="flex items-center justify-between p-3 border rounded-lg"
@@ -349,10 +427,20 @@ export function SessionAnalytics() {
                 </div>
               ))}
             </div>
-            <div className="mt-4">
-              <Button onClick={generateAnalysis} className="w-full">
+            <div className="mt-4 flex gap-2">
+              <Button onClick={generateAnalysis} className="flex-1">
                 Generate Analysis
               </Button>
+              {analysis.length > 0 && (
+                <Button
+                  onClick={exportResults}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Export Results
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -450,28 +538,30 @@ export function SessionAnalytics() {
                           </div>
                           <div>
                             <span className="font-medium">Avg Score:</span>{" "}
-                            {task.occurrences > 0
-                              ? (
-                                  task.totalImportanceScore / task.occurrences
-                                ).toFixed(1)
-                              : "N/A"}
+                            {(
+                              task.totalImportanceScore /
+                              uploadedSessions.filter((s) => s.enabled).length
+                            ).toFixed(1)}
                           </div>
                         </div>
                         <div className="mt-2">
                           <span className="font-medium text-sm">Sessions:</span>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {task.sessionOccurrences.map(
-                              (sessionOccurrence) => (
+                            {task.sessionOccurrences
+                              .sort((a, b) =>
+                                a.sessionName.localeCompare(b.sessionName)
+                              )
+                              .map((sessionOccurrence) => (
                                 <Badge
                                   key={sessionOccurrence.sessionName}
                                   className={`text-xs ${getSessionBadgeColor(
-                                    sessionOccurrence.columnType
+                                    sessionOccurrence.columnType,
+                                    sessionOccurrence.isAuditivVisible
                                   )}`}
                                 >
                                   {sessionOccurrence.sessionName}
                                 </Badge>
-                              )
-                            )}
+                              ))}
                           </div>
                         </div>
                       </div>

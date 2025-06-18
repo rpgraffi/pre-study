@@ -51,13 +51,13 @@ export function KanbanBoard({
         id: "essential",
         title: "Auditiv",
         tasks: [],
-        colorClass: "bg-green-50",
+        colorClass: "bg-blue-50",
       },
       {
         id: "semi-important",
         title: "Visuell",
         tasks: [],
-        colorClass: "bg-yellow-50",
+        colorClass: "bg-green-50",
       },
       {
         id: "unnecessary",

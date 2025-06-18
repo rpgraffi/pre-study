@@ -21,7 +21,7 @@ const generationConfig = {
 export async function analyzeKanbanAction(columns: Column[], useCase: string): Promise<{ response?: string; error?: string }> {
   try {
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
+      model: "gemini-2.5-flash-preview-04-17",
       systemInstruction: 
       `
       # You are a voice assistant in a car for a study. This is the current use case: "${useCase}". 
@@ -31,6 +31,7 @@ export async function analyzeKanbanAction(columns: Column[], useCase: string): P
 
       ## Writing style
       - Act like you know each other.
+      - ITS FOR AUDIO OUTPUT, SO SHORT AND CONSICE.
       - SHORT AND CONSICE.
       - IMPORTANT: ONLY REPLY WITH THE SENTENCE, NOTHING ELSE. RESPOND ONLY IN GERMAN. 
       - WRITE OUT ABBREVATIONS LIKE "kwh" or "km". 
